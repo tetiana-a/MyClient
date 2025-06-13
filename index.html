@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MyClient CRM</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+<style>
+  /* Базові стилі */
+  body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(270deg, #e0f7fa, #ffe0b2, #c8e6c9);
+    background-size: 600% 600%;
+    animation: gradientShift 15s ease-in-out infinite;
+    color: #222;
+    line-height: 1.6;
+  }
+
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* Тема – змінюється через клас body (наприклад, class="theme-dark") */
+  body.theme-light {
+    --bg-color: #fff;
+    --text-color: #222;
+    --accent-color: #22a573;
+    --bg-secondary: rgba(255,255,255,0.8);
+  }
+  body.theme-dark {
+    --bg-color: #222;
+    --text-color: #ddd;
+    --accent-color: #ffd700; /* золото */
+    --bg-secondary: rgba(44,44,44,0.8);
+  }
+  body.theme-green {
+    --bg-color: #e8f5e9;
+    --text-color: #222;
+    --accent-color: #388e3c; /* зелений */
+    --bg-secondary: rgba(232,245,233,0.8);
+  }
+  body.theme-golden {
+    --bg-color: #fff8dc;
+    --text-color: #222;
+    --accent-color: #b8860b; /* золото */
+    --bg-secondary: rgba(255,245,157,0.8);
+  }
+
+  /* Загальні стилі */
+header {
+    background: var(--bg-secondary);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid #eee;
+    padding: 1rem 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+  }
+
+.logo {
+    font-weight: 700;
+    font-size: 1.8rem;
+    color: var(--text-color);
+  }
+
+nav {
+    display: flex;
+    gap: 1.5rem;
+  }
+
+nav a {
+    text-decoration: none;
+    color: var(--text-color);
+    font-weight: 500;
+    transition: color 0.3s, transform 0.2s;
+  }
+nav a:hover {
+    color: var(--accent-color);
+    transform: translateY(-2px);
+  }
+
+#languageSwitcher, #themeSwitcher {
+    margin-top: 0.5rem;
+    padding: 0.4rem 0.8rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background: #fff;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.3s, border-color 0.3s;
+  }
+#languageSwitcher:hover, #themeSwitcher:hover {
+    background: #f0f0f0;
+    border-color: #999;
+  }
+
+.hero {
+    padding: 4rem 2rem;
+    text-align: center;
+    background: var(--bg-secondary);
+    margin: 2rem auto;
+    max-width: 1000px;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    animation: fadeInUp 1s ease-out;
+  }
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+.hero h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--text-color);
+  }
+.hero p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    color: #555;
+  }
+.cta-btn {
+    background-color: var(--accent-color);
+    color: #fff;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: background 0.3s, transform 0.2s;
+  }
+.cta-btn:hover {
+    background-color: darken(var(--accent-color), 10%);
+    transform: translateY(-2px);
+  }
+
+section {
+    padding: 4rem 2rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+section h2 {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 2rem;
+    position: relative;
+    color: var(--text-color);
+  }
+
+.feature, .plan, .testimonial {
+    margin-bottom: 1.5rem;
+    background: var(--bg-secondary);
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+.feature:hover, .plan:hover, .testimonial:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  }
+
+.plan {
+    background: #f8f8f8;
+  }
+.plan h3 {
+    margin-bottom: 0.5rem;
+    color: var(--accent-color);
+  }
+
+.testimonial {
+    font-style: italic;
+    border-left: 4px solid var(--accent-color);
+  }
+
+.login-section {
+    padding: 4rem 2rem;
+    background: var(--bg-secondary);
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    text-align: center;
+    margin-top: 2rem;
+    animation: fadeIn 1s ease-out;
+  }
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+.login-form {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+.login-form input {
+    width: 100%;
+    max-width: 350px;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+  }
+.login-form input:focus {
+    border-color: var(--accent-color);
+    outline: none;
+  }
+.login-form button {
+    background-color: var(--accent-color);
+    color: #fff;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+.login-form button:hover {
+    filter: brightness(0.9);
+  }
+
+.register-modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.6);
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+.register-content {
+    background: var(--bg-color);
+    padding: 2rem;
+    border-radius: 12px;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    animation: popup 0.3s ease;
+  }
+@keyframes popup {
+    0% { opacity: 0; transform: scale(0.95); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+
+footer {
+    background: var(--bg-secondary);
+    padding: 2rem;
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--text-color);
+  }
+
+@media(max-width: 600px) {
+    header {
+        flex-direction: column;
+        align-items: center;
+    }
+    nav {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .hero h1 {
+        font-size: 2rem;
+    }
+    .cta-btn {
+        width: 100%;
+    }
+}
+</style>
+</head>
+<body class="theme-light">
+<!-- Header -->
+<header>
+  <div class="logo" data-uk="MyClient" data-ru="МійКлієнт" data-it="MioCliente" data-de="MeinKunde" data-zh="我的客户" data-es="MiCliente">MyClient</div>
+  <nav>
+    <a href="#features" data-uk="Функції" data-ru="Функции" data-en="Features" data-it="Caratteristiche" data-de="Funktionen" data-zh="功能" data-es="Funciones">Функції</a>
+    <a href="#pricing" data-uk="Ціни" data-ru="Цены" data-en="Pricing" data-it="Prezzi" data-de="Preise" data-zh="价格" data-es="Precios">Ціни</a>
+    <a href="#login" data-uk="Увійти" data-ru="Войти" data-en="Login" data-it="Accedi" data-de="Anmeldung" data-zh="登录" data-es="Iniciar sesión">Увійти</a>
+  </nav>
+  <button id="languageBtn" style="margin-left:10px; padding: 0.4rem 0.8rem; border:1px solid #ccc; border-radius:6px; background:#fff; cursor:pointer;">EN</button>
+  <button id="themeSwitcher" style="margin-left:10px; padding: 0.4rem 0.8rem; border:1px solid #ccc; border-radius:6px; background:#fff;">Тема</button>
+</header>
+
+<!-- Мова та тема -->
+<script>
+const languages = ['uk', 'ru', 'en', 'it', 'de', 'zh', 'es'];
+const langNames = { uk: 'UA', ru: 'RU', en: 'EN', it: 'IT', de: 'DE', zh: 'ZH', es: 'ES' };
+let currentLangIndex = 2; // за замовчуванням англійська
+const langBtn = document.getElementById('languageBtn');
+const themeBtn = document.getElementById('themeSwitcher');
+const body = document.body;
+
+// Мови для перекладу
+function setLanguage() {
+  currentLangIndex = (currentLangIndex + 1) % languages.length;
+  const langCode = languages[currentLangIndex];
+  langBtn.textContent = langNames[langCode];
+
+  document.querySelectorAll('[data-' + langCode + ']').forEach(el => {
+    el.textContent = el.getAttribute('data-' + langCode);
+  });
+}
+langBtn.onclick = setLanguage;
+
+// Тема
+const themes = ['light', 'dark', 'green', 'golden'];
+let currentThemeIndex = 0; // світла
+function applyTheme(index) {
+  body.className = 'theme-' + themes[index];
+  localStorage.setItem('theme', themes[index]);
+}
+function toggleTheme() {
+  currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+  applyTheme(currentThemeIndex);
+}
+themeBtn.onclick = toggleTheme;
+
+// Відновлення з localStorage
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme) {
+  const idx = themes.indexOf(savedTheme);
+  if (idx !== -1) {
+    currentThemeIndex = idx;
+    applyTheme(idx);
+  }
+} else {
+  applyTheme(currentThemeIndex);
+}
+
+// Початковий стан
+setTimeout(() => {
+  // Встановити мову за замовчуванням
+  document.querySelectorAll('[data-' + languages[currentLangIndex] + ']').forEach(el => {
+    el.textContent = el.getAttribute('data-' + languages[currentLangIndex]);
+  });
+  // Встановити тему
+  applyTheme(currentThemeIndex);
+}, 100);
+</script>
+
+<!-- Головна секція -->
+<section class="hero">
+  <h1 data-uk="Забудь про блокноти та повідомлення!"
+      data-ru="Забудьте о блокнотах и сообщениях!"
+      data-en="Forget notebooks and messages!"
+      data-it="Dimentica quaderni e messaggi!"
+      data-de="Vergiss Notizbücher und Nachrichten!"
+      data-zh="忘记笔记本和消息！"
+      data-es="¡Olvida libretas y mensajes!">
+    Забудь про блокноти та повідомлення!
+  </h1>
+  <p data-uk="MyClient – це інтуїтивна CRM для майстрів краси. Клієнти, записи, фінанси – без хаосу."
+     data-ru="MyClient — интуитивная CRM для мастеров красоты. Клиенты, записи, финансы — без хаоса."
+     data-en="MyClient is an intuitive CRM for beauty professionals. Clients, appointments, finances — chaos-free."
+     data-it="MyClient è una CRM intuitiva per professionisti della bellezza. Clienti, appuntamenti, finanze — senza caos."
+     data-de="MyClient ist eine intuitive CRM für Beauty-Profis. Kunden, Termine, Finanzen — ohne Chaos."
+     data-zh="MyClient 是美容專業人士的直觀 CRM。客戶、預約、財務——無雜亂。"
+     data-es="MyClient es un CRM intuitivo para profesionales de la belleza. Clientes, citas, finanzas — sin caos.">
+    MyClient – це інтуїтивна CRM для майстрів краси. Клієнти, записи, фінанси – без хаосу.
+  </p>
+  <button class="cta-btn" data-uk="Спробувати безкоштовно 7 днів"
+          data-ru="Попробуйте бесплатно 7 дней"
+          data-en="Try free for 7 days"
+          data-it="Prova gratis per 7 giorni"
+          data-de="Kostenlos testen für 7 Tage"
+          data-zh="免费试用 7 天"
+          data-es="Prueba gratis durante 7 días">
+    Спробувати безкоштовно 7 днів
+  </button>
+  <p style="margin-top: 1rem; font-size: 0.9rem;" data-uk="Не потрібна банківська картка. Вже понад 1000 майстрів з нами!"
+     data-ru="Не нужна банковская карта. Уже более 1000 мастеров с нами!"
+     data-en="No card needed. Over 1000 professionals already with us!"
+     data-it="Nessuna carta necessaria. Oltre 1000 professionisti già con noi!"
+     data-de="Keine Karte nötig. Über 1000 Profis schon bei uns!"
+     data-zh="无需银行卡。已有超过 1000 位专业人士加入！"
+     data-es="No se necesita tarjeta. ¡Más de 1000 profesionales ya con nosotros!">
+    Не потрібна банківська картка. Вже понад 1000 майстрів з нами!
+  </p>
+</section>
+
+<!-- Функції -->
+<section id="features" style="margin-top: 3rem;">
+  <h2 data-uk="Функції" data-ru="Функции" data-en="Features" data-it="Caratteristiche" data-de="Funktionen" data-zh="功能" data-es="Funciones">Функції</h2>
+  <div class="feature" data-uk="Вся історія процедур і контакти в одному місці."
+       data-ru="Вся история процедур и контактов в одном месте."
+       data-en="All procedures and contacts in one place."
+       data-it="Tutte le procedure e i contatti in un unico posto."
+       data-de="Alle Verfahren und Kontakte an einem Ort."
+       data-zh="所有程序和联系人都在一个地方。"
+       data-es="Todos los procedimientos y contactos en un solo lugar.">
+    <strong>Клієнти на долоні:</strong> Вся історія процедур і контакти в одному місці.
+  </div>
+  <div class="feature" data-uk="Зручний календар, планування та нагадування."
+       data-ru="Удобный календарь, планирование и напоминания."
+       data-en="Smart calendar, scheduling, reminders."
+       data-it="Calendario intelligente, pianificazione, promemoria."
+       data-de="Intelligent Kalender, Terminplanung, Erinnerungen."
+       data-zh="智能日曆、排程和提醒。"
+       data-es="Calendario inteligente, programación, recordatorios.">
+    <strong>Інтелектуальні записи:</strong> Зручний календар, планування та нагадування.
+  </div>
+  <div class="feature" data-uk="Статистика доходів за день, тиждень, місяць."
+       data-ru="Статистика доходов за день, неделю, месяц."
+       data-en="Income stats by day, week, month."
+       data-it="Statistiche sui guadagni giornalieri, settimanali, mensili."
+       data-de="Einkommensstatistiken nach Tag, Woche, Monat."
+       data-zh="每日、每週、每月的收入統計。"
+       data-es="Estadísticas de ingresos por día, semana, mes.">
+    <strong>Фінанси:</strong> Статистика доходів за день, тиждень, місяць.
+  </div>
+  <div class="feature" data-uk="Захищений доступ з будь-якого пристрою."
+       data-ru="Безопасный доступ с любого устройства."
+       data-en="Secure access from any device."
+       data-it="Accesso sicuro da qualsiasi dispositivo."
+       data-de="Sicherer Zugriff von jedem Gerät."
+       data-zh="從任何設備安全訪問。"
+       data-es="Acceso seguro desde cualquier dispositivo.">
+    <strong>Безпека:</strong> Захищений доступ з будь-якого пристрою.
+  </div>
+</section>
+
+<!-- Ціни -->
+<section id="pricing" style="margin-top: 3rem;">
+  <h2 data-uk="Ціни" data-ru="Цены" data-en="Pricing" data-it="Prezzi" data-de="Preise" data-zh="价格" data-es="Precios">Ціни</h2>
+  <div class="plan" data-uk="7 днів безкоштовно" data-ru="7 дней бесплатно" data-en="7 days free" data-it="7 giorni gratis" data-de="7 Tage kostenlos" data-zh="7 天免费" data-es="7 días gratis">
+    <h3>Free</h3>
+    <p>7 днів безкоштовно</p>
+    <p>До 3 клієнтів</p>
+    <p>Базові функції</p>
+  </div>
+  <div class="plan" data-uk="5$ / місяць або 49$ / рік" data-ru="$5 / месяц или $49 / год" data-en="$5/month or $49/year" data-it="$5/mese o $49/anno" data-de="$5/Monat oder $49/Jahr" data-zh="$5/月或$49/年" data-es="$5/mes o $49/año">
+    <h3>Pro</h3>
+    <p>5$ / місяць або 49$ / рік</p>
+    <p>Необмежено клієнтів</p>
+    <p>Усі функції + підтримка</p>
+  </div>
+</section>
+
+<!-- Відгуки -->
+<section style="margin-top: 3rem;">
+  <h2 data-uk="Відгуки" data-ru="Отзывы" data-en="Testimonials" data-it="Testimonianze" data-de="Zeugnisse" data-zh="评价" data-es="Testimonios">Відгуки</h2>
+  <div class="testimonial" data-uk='"MyClient змінив мій робочий день! Нарешті порядок." – Світлана, майстер манікюру'
+       data-ru='"MyClient изменил мой рабочий день! Наконец порядок." – Светлана, мастер маникюра'
+       data-en='"MyClient changed my workday! Finally order." – Svitlana, manicurist'
+       data-it='"MyClient ha cambiato la mia giornata lavorativa! Finalmente ordine." – Svitlana, manicure'
+       data-de='"MyClient hat meinen Arbeitstag verändert! Endlich Ordnung." – Svitlana, Nageltechnikerin'
+       data-zh='"MyClient 改变了我的工作日！终于有序了。" – 斯维特兰娜, 美甲师'
+       data-es='"¡MyClient cambió mi día de trabajo! Finalmente orden." – Svitlana, manicurista'>
+    "MyClient змінив мій робочий день! Нарешті порядок." – Світлана, майстер манікюру
+  </div>
+  <div class="testimonial" data-uk='"Ніяких більше втрачених записів. Це так просто!" – Олег, масажист'
+       data-ru='"Никаких больше потерянных записей. Это так просто!" – Олег, массажист'
+       data-en='"No more lost appointments. So simple!" – Oleg, masseur'
+       data-it='"Nessun appuntamento perso. È così semplice!" – Oleg, massaggiatore'
+       data-de='"Keine verlorenen Termine mehr. So einfach!" – Oleg, Masseur'
+       data-zh='"不再丢失预约。如此简单！" – 奥列格, 按摩师'
+       data-es='"No más citas perdidas. ¡Así de simple!" – Oleg, masajista'>
+    "Ніяких більше втрачених записів. Це так просто!" – Олег, масажист
+  </div>
+  <div class="testimonial" data-uk='"Ця CRM дійсно розуміє мої потреби." – Анастасія, тату-майстер'
+       data-ru='"Эта CRM действительно понимает мои потребности." – Анастасия, тату-мастер'
+       data-en='"This CRM truly understands my needs." – Anastasia, tattoo artist'
+       data-it='"Questa CRM comprende davvero le mie esigenze." – Anastasia, tatuatrice'
+       data-de='"Diese CRM versteht wirklich meine Bedürfnisse." – Anastasia, Tätowiererin'
+       data-zh='"這個 CRM 真正理解我的需求。" – 阿納斯塔西婭, 紋身師'
+       data-es='"Este CRM realmente entiende mis necesidades." – Anastasia, artista del tatuaje'>
+    "Ця CRM дійсно розуміє мої потреби." – Анастасія, тату-майстер
+  </div>
+</section>
+
+<!-- Вхід -->
+<section id="login" class="login-section" style="margin-top: 3rem;">
+  <h2 data-uk="Увійти в аккаунт" data-ru="Войти в аккаунт" data-en="Login to your account" data-it="Accedi al tuo account" data-de="Anmeldung" data-zh="登录" data-es="Iniciar sesión">Увійти в аккаунт</h2>
+  <form class="login-form">
+    <input type="email" placeholder="Email" required />
+    <input type="password" placeholder="Пароль" required />
+    <button type="submit" data-uk="Увійти" data-ru="Войти" data-en="Login" data-it="Accedi" data-de="Anmeldung" data-zh="登录" data-es="Iniciar sesión">Увійти</button>
+  </form>
+  <p style="margin-top: 1rem;">
+    <a href="#" onclick="openRegisterModal()" data-uk="Зареєструватися" data-ru="Зарегистрироваться" data-en="Register" data-it="Registrati" data-de="Registrieren" data-zh="注册" data-es="Registrarse">Зареєструватися</a>
+  </p>
+</section>
+
+<!-- Модаль -->
+<div class="register-modal" id="registerModal" onclick="closeRegisterModal()">
+  <div class="register-content" onclick="event.stopPropagation()">
+    <h2 data-uk="Реєстрація" data-ru="Регистрация" data-en="Registration" data-it="Registrazione" data-de="Registrierung" data-zh="注册" data-es="Registro">Реєстрація</h2>
+    <input type="text" placeholder="Ім’я" required />
+    <input type="email" placeholder="Email" required />
+    <input type="password" placeholder="Пароль" required />
+    <button type="submit" data-uk="Зареєструватися" data-ru="Зарегистрировать" data-en="Register" data-it="Registrati" data-de="Registrieren" data-zh="注册" data-es="Registrarse">Зареєструватися</button>
+    <p style="margin-top: 1rem;"><a href="#" onclick="closeRegisterModal()" data-uk="Закрити" data-ru="Закрыть" data-en="Close" data-it="Chiudi" data-de="Schließen" data-zh="关闭" data-es="Cerrar">Закрити</a></p>
+  </div>
+</div>
+
+<!-- "Як це працює" -->
+<section class="how-it-works" style="margin-top: 3rem; padding: 4rem 2rem; background: rgba(255,255,255,0.9); border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.1);">
+<h2 style="margin-bottom: 2rem; text-align: center;"
+  data-uk="Як це працює?" data-ru="Как это работает?" data-en="How it works?" data-it="Come funziona?" data-de="Wie es funktioniert?" data-zh="这是如何工作的？" data-es="¿Cómo funciona?">
+  Як це працює?
+</h2>
+<div style="display:flex; flex-wrap: wrap; gap:2rem; justify-content:center;">
+  <div style="flex:1 1 250px; min-width:250px; background:#fff; border-radius:12px; padding:1.5rem; box-shadow:0 4px 10px rgba(0,0,0,0.05); transition:transform 0.3s;">
+    <h3 style="margin-bottom:1rem;"
+       data-uk="1. Реєстрація" data-ru="1. Регистрация" data-en="1. Registration" data-it="1. Registrazione" data-de="1. Registrierung" data-zh="1. 注册" data-es="1. Registro">
+      1. Реєстрація
+    </h3>
+    <p data-uk="Зареєструйся за 30 секунд. Безкоштовно. Без картки."
+       data-ru="Зарегистрируйтесь за 30 секунд. Бесплатно. Без карты."
+       data-en="Register in 30 seconds. Free. No card needed."
+       data-it="Registrati in 30 secondi. Gratis. Nessuna carta richiesta."
+       data-de="Registrieren in 30 Sekunden. Kostenlos. Keine Karte notwendig."
+       data-zh="30秒注册。免费。无需银行卡。"
+       data-es="Regístrate en 30 segundos. Gratis. Sin tarjeta.">
+      Зареєструйся за 30 секунд. Безкоштовно. Без картки.
+    </p>
+  </div>
+  <div style="flex:1 1 250px; min-width:250px; background:#fff; border-radius:12px; padding:1.5rem; box-shadow:0 4px 10px rgba(0,0,0,0.05); transition:transform 0.3s;">
+    <h3 style="margin-bottom:1rem;"
+       data-uk="2. Додай клієнтів" data-ru="2. Добавьте клиентов" data-en="2. Add clients" data-it="2. Aggiungi clienti" data-de="2. Füge Kunden hinzu" data-zh="2. 添加客户" data-es="2. Agrega clientes">
+      2. Додай клієнтів
+    </h3>
+    <p data-uk="Імпортуй з телефону або додай вручну. Історія процедур – під рукою."
+       data-ru="Импортируй с телефона или добавляй вручную. История процедур — под рукой."
+       data-en="Import from phone or add manually. Procedure history at your fingertips."
+       data-it="Importa dal telefono o aggiungi manualmente. Cronologia delle procedure a portata di mano."
+       data-de="Importiere vom Telefon oder manuell hinzufügen. Verfahrensgeschichte zur Hand."
+       data-zh="从手机导入或手动添加。程序历史随手可得。"
+       data-es="Importa desde el teléfono o añade manualmente. Historial de procedimientos a tu alcance.">
+      Імпортуй з телефону або додай вручну. Історія процедур – під рукою.
+    </p>
+  </div>
+  <div style="flex:1 1 250px; min-width:250px; background:#fff; border-radius:12px; padding:1.5rem; box-shadow:0 4px 10px rgba(0,0,0,0.05); transition:transform 0.3s;">
+    <h3 style="margin-bottom:1rem;"
+       data-uk="3. Працюй ефективно" data-ru="3. Работайте эффективно" data-en="3. Work efficiently" data-it="3. Lavora in modo efficiente" data-de="3. Effizient arbeiten" data-zh="3. 高效工作" data-es="3. Trabaja con eficiencia">
+      3. Працюй ефективно
+    </h3>
+    <p data-uk="Записуй, заробляй, керуй фінансами. Усе – в одній зручній CRM."
+       data-ru="Записывайте, зарабатывайте, управляйте финансами. Всё — в одной удобной CRM."
+       data-en="Record, earn, manage finances. All in one convenient CRM."
+       data-it="Registra, guadagna, gestisci le finanze. Tutto in un'unica CRM comoda."
+       data-de="Aufzeichnen, verdienen, Finanzen verwalten. Alles in einer praktischen CRM."
+       data-zh="记录、赚钱、财务管理。一切尽在一个方便的CRM。"
+       data-es="Registra, gana, gestiona finanzas. Todo en un CRM conveniente.">
+      Записуй, заробляй, керуй фінансами. Усе – в одній зручній CRM.
+    </p>
+  </div>
+</div>
+</section>
+
+<!-- Інтерфейс -->
+<section class="crm-screens" style="margin-top:3rem; padding:4rem 2rem; background:#f4f4f8; border-radius:15px; box-shadow:0 8px 20px rgba(0,0,0,0.05);">
+<h2 style="margin-bottom:2rem; text-align:center;"
+  data-uk="Приклад Інтерфейсу" data-ru="Пример интерфейса" data-en="Sample Interface" data-it="Interfaccia di esempio" data-de="Beispieloberfläche" data-zh="界面示例" data-es="Ejemplo de interfaz">
+  Приклад Інтерфейсу
+</h2>
+<div style="display:flex; flex-wrap:wrap; gap:2rem; justify-content:center;">
+  <div style="flex:1 1 300px; min-width:280px; background:#fff; border-radius:12px; padding:1rem; box-shadow:0 4px 10px rgba(0,0,0,0.05);">
+    <h3 style="margin-bottom:0.5rem;">📋 Екран "Клієнти"</h3>
+    <ul style="list-style:none; padding:0; font-size:0.95rem; color:#333;">
+      <li><strong>Марія Іванова</strong> – +380 XX XXX XX XX</li>
+      <li><strong>Instagram:</strong> @maria_nails</li>
+      <li><em>Останній візит:</em> 12.06.2025</li>
+      <li><em>Примітка:</em> Алергія на гель</li>
+    </ul>
+  </div>
+  <div style="flex:1 1 300px; min-width:280px; background:#fff; border-radius:12px; padding:1rem; box-shadow:0 4px 10px rgba(0,0,0,0.05);">
+    <h3 style="margin-bottom:0.5rem;">📅 Новий Запис</h3>
+    <ul style="list-style:none; padding:0; font-size:0.95rem; color:#333;">
+      <li><strong>Клієнт:</strong> Марія Іванова</li>
+      <li><strong>Процедура:</strong> Манікюр + покриття</li>
+      <li><strong>Дата:</strong> 13.06.2025</li>
+      <li><strong>Час:</strong> 15:00</li>
+      <li><strong>Ціна:</strong> 650 грн</li>
+    </ul>
+  </div>
+  <div style="flex:1 1 300px; min-width:280px; background:#fff; border-radius:12px; padding:1rem; box-shadow:0 4px 10px rgba(0,0,0,0.05);">
+    <h3 style="margin-bottom:0.5rem;">💰 Фінанси</h3>
+    <ul style="list-style:none; padding:0; font-size:0.95rem; color:#333;">
+      <li><strong>Сьогодні:</strong> 1 250 грн</li>
+      <li><strong>Тиждень:</strong> 4 500 грн</li>
+      <li><strong>Місяць:</strong> 18 700 грн</li>
+      <li><em>Останні записи:</em></li>
+      <li>Марія – Манікюр – 650 грн</li>
+      <li>Олена – Брови – 300 грн</li>
+    </ul>
+  </div>
+</div>
+</section>
+
+<!-- Темна/інша тема -->
+<section style="margin-top:3rem; padding:2rem; text-align:center;">
+  <button id="toggleThemeBtn" style="padding:0.7rem 1.5rem; background:var(--accent-color); color:#fff; border:none; border-radius:6px; font-size:1rem; cursor:pointer;">Змінити тему</button>
+</section>
+
+<!-- Скрипти -->
+<script>
+const body = document.body;
+const themes = ['light', 'dark', 'green', 'golden'];
+let currentThemeIdx = Number(localStorage.getItem('themeIndex')) || 0;
+
+// Застосовуємо тему
+function applyTheme(index) {
+  body.className = 'theme-' + themes[index];
+  localStorage.setItem('themeIndex', index);
+}
+applyTheme(currentThemeIdx);
+
+// Переключення теми
+document.getElementById('toggleThemeBtn').onclick = () => {
+  currentThemeIdx = (currentThemeIdx + 1) % themes.length;
+  applyTheme(currentThemeIdx);
+}
+
+// Мови
+const langNames = { uk:'UA', ru:'RU', en:'EN', it:'IT', de:'DE', zh:'ZH', es:'ES' };
+const languageBtn = document.getElementById('languageBtn');
+let langIdx = 2; // за замовчуванням англійська
+const langCodes = ['uk','ru','en','it','de','zh','es'];
+
+function switchLanguage() {
+  langIdx = (langIdx + 1) % langCodes.length;
+  const code = langCodes[langIdx];
+  languageBtn.textContent = langNames[code];
+  document.querySelectorAll('[data-'+code+']').forEach(el => {
+    el.textContent = el.getAttribute('data-'+code);
+  });
+}
+languageBtn.onclick = switchLanguage;
+
+// Ініціалізація
+window.onload = () => {
+  // Встановити мову за замовчуванням
+  const currentCode = langCodes[langIdx];
+  document.querySelectorAll('[data-'+currentCode+']').forEach(el => {
+    el.textContent = el.getAttribute('data-'+currentCode);
+  });
+  // Встановити тему
+  if (localStorage.getItem('themeIndex')) {
+    currentThemeIdx = Number(localStorage.getItem('themeIndex'));
+    applyTheme(currentThemeIdx);
+  } else {
+    applyTheme(currentThemeIdx);
+  }
+  // Встановити кнопку мови
+  languageBtn.textContent = langNames[langCodes[langIdx]];
+};
+</script>
+
+<!-- Основні елементи -->
+<!-- Весь текст перекладається при натисканні кнопки -->
+
+<!-- Нижній колонтитул -->
+<footer style="margin-top:3rem; padding:2rem; background:var(--bg-secondary); text-align:center; font-size:0.9rem; color:var(--text-color);">
+  © 2025 MyClient | <a href="#" style="text-decoration:underline; color:inherit;">Умови користування</a> | <a href="#" style="text-decoration:underline; color:inherit;">Політика конфіденційності</a>
+</footer>
+</body>
+</html>
