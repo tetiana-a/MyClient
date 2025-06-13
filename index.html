@@ -541,6 +541,52 @@ html {
   margin-bottom: 2rem;
   color: #333;
 }
+
+
+#scrollTopBtn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: rgba(76, 175, 80, 0.2); /* прозорий зелений */
+  color: #4CAF50;
+  border: 2px solid #4CAF50;
+  border-radius: 50px;
+  padding: 0.6rem 1rem;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: none;
+  z-index: 999;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  backdrop-filter: blur(4px);
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+#scrollTopBtn:hover {
+  background: rgba(76, 175, 80, 0.3);
+  transform: translateY(-2px);
+}
+
+
+@media (max-width: 600px) {
+  #scrollTopBtn {
+    padding: 0.4rem 0.6rem;
+    border-radius: 40px;
+  }
+  #scrollTopBtn svg {
+    height: 20px;
+    width: 20px;
+  }
+}
+
+
+#scrollTopBtn {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease, transform 0.3s ease;
+}
+#scrollTopBtn.visible {
+  opacity: 1;
+  visibility: visible;
+}
 </style>
 </head>
 <body class="theme-light"><div id="vanta-bg" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;"></div>
@@ -554,7 +600,7 @@ html {
 <a data-de="Anmeldung" data-en="Login" data-es="Iniciar sesión" data-it="Accedi" data-ru="Войти" data-uk="Увійти" data-zh="登录" href="#login">Увійти</a>
 </nav>
 <button id="languageBtn" style="margin-left:10px; padding: 0.4rem 0.8rem; border:1px solid #ccc; border-radius:6px; background:#fff; cursor:pointer;">EN</button>
-<button id="themeSwitcher" style="margin-left:10px; padding: 0.4rem 0.8rem; border:1px solid #ccc; border-radius:6px; background:#fff;">Тема</button>
+<button id="themeSwitcher" style="margin-left:10px; padding: 0.4rem 0.8rem; border:1px solid #ccc; border-radius:6px; background:#fff;">Theme</button>
 </header>
 <!-- Мова та тема -->
 <script>
@@ -892,35 +938,45 @@ VANTA.NET({
   spacing: 18.0
 });
 </script>
-<button id="scrollTopBtn">🔝</button>
+<button id="scrollTopBtn">
+<svg fill="#4CAF50" height="24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 4l-6 6h4v6h4v-6h4z"></path>
+</svg>
+</button>
+<section style="text-align:center;">
+<h2>Stay in the loop 📨</h2>
+<p>Subscribe to get updates and news from My client.</p>
+<form style="margin-top:1rem;">
+<input placeholder="Enter your email" required="" style="padding:0.6rem 1rem; border-radius: 8px; border: 1px solid #ccc; width: 250px; max-width: 90%;" type="email"/>
+<button style="padding: 0.6rem 1rem; background-color: #4CAF50; color: white; border: none; border-radius: 8px; margin-left: 0.5rem; cursor: pointer;" type="submit">Subscribe</button>
+</form>
+</section>
+<div id="logoModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:center;">
+<div style="background:white; padding:2rem; border-radius:12px; max-width:400px; width:90%; text-align:center; box-shadow:0 8px 24px rgba(0,0,0,0.2);">
+<h2>Welcome to CRM!</h2>
+<p>Your journey to mastery starts here.</p>
+<button onclick="document.getElementById('logoModal').style.display='none'" style="margin-top:1rem; padding:0.6rem 1.2rem; background:#4CAF50; color:white; border:none; border-radius:8px; cursor:pointer;">Close</button>
+</div>
+</div>
 <script>
 window.addEventListener("scroll", () => {
   const btn = document.getElementById("scrollTopBtn");
   if (window.scrollY > 300) {
-    btn.style.display = "block";
+    btn.classList.add("visible");
   } else {
-    btn.style.display = "none";
+    btn.classList.remove("visible");
   }
 });
 document.getElementById("scrollTopBtn").addEventListener("click", () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
 </script>
-<section style="text-align:center;">
-<h2>Stay in the loop 📨</h2>
-<p>Subscribe to get updates and news from Wolf Academy.</p>
-<form style="margin-top:1rem;">
-<input placeholder="Enter your email" required="" style="padding:0.6rem 1rem; border-radius: 8px; border: 1px solid #ccc; width: 250px; max-width: 90%;" type="email"/>
-<button style="padding: 0.6rem 1rem; background-color: #4CAF50; color: white; border: none; border-radius: 8px; margin-left: 0.5rem; cursor: pointer;" type="submit">Subscribe</button>
-</form>
-</section>
-
-<div id="logoModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:center;">
-<div style="background:white; padding:2rem; border-radius:12px; max-width:400px; width:90%; text-align:center; box-shadow:0 8px 24px rgba(0,0,0,0.2);">
-<h2>Welcome to Wolf Academy!</h2>
-<p>Your journey to mastery starts here.</p>
-<button onclick="document.getElementById('logoModal').style.display='none'" style="margin-top:1rem; padding:0.6rem 1.2rem; background:#4CAF50; color:white; border:none; border-radius:8px; cursor:pointer;">Close</button>
-</div>
-</div>
+<script>
+  window.chatbaseConfig = {
+    chatbotId: "YOUR_CHATBOT_ID",
+    domain: "www.chatbase.co"
+  };
+</script>
+<script defer="" id="chatbase-script" src="https://www.chatbase.co/embed.min.js"></script>
 </body>
 </html>
